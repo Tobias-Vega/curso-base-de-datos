@@ -15,3 +15,88 @@ SELECT * FROM libros WHERE autor_id IN (SELECT autor_id FROM autores WHERE seudo
 
 UPDATE libros SET descripcion = 'No disponible' WHERE fecha_publicacion < '2000-01-01';
 
+-- Obtener la llave primaria de todos los libros cuya descripción sea diferente de no disponible.
+
+SELECT libro_id FROM libros WHERE descripcion <> 'No disponible';
+
+-- Obtener el título de los últimos 3 libros escritos por el autor con id 2.
+
+SELECT titulo FROM libros WHERE autor_id = 2 ORDER BY fecha_publicacion DESC LIMIT 3;
+
+-- Obtener en un mismo resultado la cantidad de libros escritos por autores con seudónimo y sin seudónimo.
+
+SELECT (SELECT COUNT(*) FROM libros WHERE autor_id IN (SELECT autor_id FROM autores WHERE seudonimo IS NOT NULL)) AS con_seudonimo,(SELECT COUNT(*) FROM libros WHERE autor_id IN (SELECT autor_id FROM autores WHERE seudonimo IS NULL)) AS sin_seudonimo;
+
+
+-- Obtener la cantidad de libros publicados entre enero del año 2000 y enero del año 2005.
+
+SELECT COUNT(*) AS cantidad FROM libros WHERE fecha_publicacion BETWEEN '2000-01-01' AND '2005-01-01';
+
+-- Obtener el título y el número de ventas de los cinco libros más vendidos.
+SELECT titulo, ventas FROM libros ORDER BY ventas DESC LIMIT 5;
+
+-- Obtener el título y el número de ventas de los cinco libros más vendidos de la última década.
+
+SELECT titulo, ventas FROM libros WHERE fecha_publicacion '2021-01-01' AND '2030-12-31' ORDER BY ventas DESC;
+
+-- Obtener la cantidad de libros vendidos por los autores con id 1, 2 y 3.
+
+SELECT autor_id, SUM(ventas) AS cantidad_vendida FROM libros WHERE autor_id IN (1, 2, 3) GROUP BY autor_id;
+
+-- Obtener el título del libro con más páginas.
+SELECT titulo, paginas FROM libros ORDER BY paginas DESC LIMIT 1;
+
+-- Obtener todos los libros cuyo título comience con la palabra “La”.
+SELECT * FROM libros WHERE titulo LIKE 'La %';
+
+-- Obtener todos los libros cuyo título comience con la palabra “La” y termine con la letra “a”.
+SELECT * FROM libros WHERE titulo LIKE 'La %' AND titulo LIKE '%a';
+
+-- Establecer el stock en cero a todos los libros publicados antes del año de 1995
+
+UPDATE libros SET stock = 0 WHERE fecha_publicacion < '1995-01-01';
+
+
+-- Mostrar el mensaje Disponible si el libro con id 1 posee más de 5 ejemplares en stock, en caso contrario mostrar el mensaje No disponible.
+SELECT IF(stock > 5, "Disponible", "No disponible") AS mensaje FROM libros WHERE libro_id = 5;
+
+-- Obtener el título los libros ordenador por fecha de publicación del más reciente al más viejo.
+SELECT titulo FROM libros ORDER BY fecha_publicacion DESC;
+
+-- Ejercicio autores
+-- Obtener el nombre de los autores cuya fecha de nacimiento sea posterior a 1950
+SELECT titulo FROM libros ORDER BY fecha_publicacion DESC;
+
+-- Obtener la el nombre completo y la edad de todos los autores.
+
+SELECT CONCAT(nombre, ' ', apellido), TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad FROM autores;
+
+-- Obtener el id de todos los escritores cuyas ventas en sus libros superen el promedio.
+
+SELECT autor_id FROM autores WHERE autor_id IN (SELECT autor_id FROM libros WHERE ventas > (SELECT AVG(ventas) FROM libros));
+
+-- Obtener el id de todos los escritores cuyas ventas en sus libros sean mayores a cien mil ejemplares.
+SELECT autor_id FROM autores WHERE autor_id IN (SELECT autor_id FROM libros GROUP BY autor_id HAVING SUM(ventas) > 100000);
+
+
+-- Funciones
+-- Crear una función la cual nos permita saber si un libro es candidato a préstamo o no. Retornar “Disponible” si el libro posee por lo menos un ejemplar en stock, en caso contrario retornar “No disponible.”
+
+DELIMITER //
+
+CREATE FUNCTION prestamo(libro INT)
+RETURNS VARCHAR(20)
+NOT DETERMINISTIC
+READS SQL DATA
+BEGIN
+  DECLARE estado VARCHAR(20);
+  SELECT IF(stock > 0, "Disponible", "No Disponible")
+  INTO estado
+  FROM libros
+  WHERE libro_id = libro
+  LIMIT 1;
+
+  RETURN estado;
+END//
+
+DELIMITER ;
