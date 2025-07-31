@@ -1,0 +1,23 @@
+-- MySQL
+CREATE TABLE nombre_tabla (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100),
+  edad INT,
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- POSTGRESQL
+CREATE TABLE nombre_tabla (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(100),
+  edad INTEGER,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- SQL Server
+CREATE TABLE nombre_tabla (
+  id INT PRIMARY KEY IDENTITY(1,1),
+  nombre NVARCHAR(100),
+  edad INT,
+  fecha_creacion DATETIME DEFAULT GETDATE()
+);
