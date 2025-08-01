@@ -1,5 +1,3 @@
--- UNION
-
-SELECT 'A' AS col1, 'B' AS col2
+SELECT columna1, columna2 FROM tabla1
 UNION
-SELECT 'C' AS col1, 'D' AS col2;
+SELECT columna1, columna2 FROM tabla2;
