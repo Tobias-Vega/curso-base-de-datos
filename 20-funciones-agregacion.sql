@@ -19,3 +19,8 @@ SELECT MIN(columna) FROM tabla; -- Obtiene el valor mínimo de una columna
 -- GROUP BY: agrupar registros
 SELECT columna, COUNT(*) FROM tabla GROUP BY columna; -- Agrupa por una columna y cuenta
 
+-- HAVING: filtrar grupos agregados
+SELECT columna, funcion_agregada
+FROM tabla
+GROUP BY columna
+HAVING condicion;
