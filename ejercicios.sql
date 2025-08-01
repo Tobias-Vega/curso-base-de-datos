@@ -65,7 +65,7 @@ SELECT titulo FROM libros ORDER BY fecha_publicacion DESC;
 
 -- Ejercicio autores
 -- Obtener el nombre de los autores cuya fecha de nacimiento sea posterior a 1950
-SELECT titulo FROM libros ORDER BY fecha_publicacion DESC;
+SELECT nombre FROM autores WHERE fecha_nacimiento > '1950-01-01';
 
 -- Obtener la el nombre completo y la edad de todos los autores.
 
